@@ -226,6 +226,12 @@ final class StringExtensionsTests: XCTestCase {
         let helloWorld = "hello world".url
         #if os(Linux) || os(Android)
         XCTAssertEqual(helloWorld, URL(string: "hello%20world"))
+        #elseif targetEnvironment(macCatalyst)
+        if #available(iOS 26.0, *) {
+            XCTAssertNil(helloWorld)
+        } else {
+            XCTAssertEqual(helloWorld, URL(string: "hello%20world"))
+        }
         #else
         if #available(iOS 17.0, *) {
             XCTAssertEqual(helloWorld, URL(string: "hello%20world"))
@@ -620,32 +626,22 @@ final class StringExtensionsTests: XCTestCase {
 
     #if canImport(Foundation)
     func testPatternMatchOperator() {
-        XCTAssert("\\d{3}" ~= "123")
-        XCTAssertFalse("\\d{3}" ~= "dasda")
-        XCTAssertFalse(emailPattern ~= "notanemail.com")
-        XCTAssert(emailPattern ~= "email@mail.com")
-        XCTAssert("[a-z]at" ~= "hat")
-        XCTAssertFalse("[a-z]at" ~= "")
-        XCTAssert("[a-z]*" ~= "")
-        XCTAssertFalse("[0-9]+" ~= "")
-
-        // https://github.com/SwifterSwift/SwifterSwift/issues/1109
-        let codeString = "0"
-        switch codeString {
-        case "101":
-            XCTAssert(codeString == "101")
-        case "0":
-            XCTAssert(codeString == "0")
-        default:
-            XCTFail("Switch string value, not matching the correct result.")
-        }
+        XCTAssert("123" =~ "\\d{3}")
+        XCTAssertFalse("dasda" =~ "\\d{3}")
+        XCTAssertFalse("notanemail.com" =~ emailPattern)
+        XCTAssert("email@mail.com" =~ emailPattern)
+        XCTAssert("hat" =~ "[a-z]at")
+        XCTAssertFalse("" =~ "[a-z]at")
+        XCTAssert("" =~ "[a-z]*")
+        XCTAssert("" =~ "[a-z]*")
+        XCTAssertFalse("" =~ "[0-9]+")
     }
     #endif
 
     func testRegexMatchOperator() throws {
         let regex = try NSRegularExpression(pattern: "\\d{3}")
-        XCTAssert(regex ~= "123")
-        XCTAssertFalse(regex ~= "abc")
+        XCTAssert("123" =~ regex)
+        XCTAssertFalse("abc" =~ regex)
     }
 
     func testPadStart() {

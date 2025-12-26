@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SwifterSwift'
-  s.version = '7.0.0'
+  s.version = '8.0.0'
   s.summary = 'A handy collection of more than 500 native Swift extensions to boost your productivity.'
   s.description = <<-DESC
   SwifterSwift is a collection of over 500 native Swift extensions, with handy methods, syntactic sugar, and performance improvements for wide range of primitive data types, UIKit and Cocoa classes –over 500 in 1– for iOS, macOS, tvOS and watchOS.
@@ -41,9 +41,27 @@ Pod::Spec.new do |s|
     sp.source_files = 'Sources/SwifterSwift/Shared/*.swift', 'Sources/SwifterSwift/UIKit/*.swift'
   end
 
+  # UIKit Without IBInspectable Extensions
+  s.subspec 'UIKitNoIBInspectable' do |sp|
+    sp.dependency 'SwifterSwift/UIKit'
+    sp.exclude_files = 'Sources/SwifterSwift/UIKit/IBInspectable/*.swift'
+  end
+
   # AppKit Extensions
   s.subspec 'AppKit' do |sp|
     sp.source_files = 'Sources/SwifterSwift/Shared/*.swift', 'Sources/SwifterSwift/AppKit/*.swift'
+  end
+
+  # AppKit Without IBInspectable Extensions
+  s.subspec 'AppKitNoIBInspectable' do |sp|
+    sp.dependency 'SwifterSwift/AppKit'
+    sp.exclude_files = 'Sources/SwifterSwift/AppKit/IBInspectable/*.swift'
+  end
+
+  # SwifterSwift Without IBInspectable Extensions
+  s.subspec 'NoIBInspectable' do |sp|
+    sp.source_files = 'Sources/SwifterSwift/**/*.swift'
+    sp.exclude_files = 'Sources/SwifterSwift/**/IBInspectable/*.swift'
   end
 
   # CoreGraphics Extensions
